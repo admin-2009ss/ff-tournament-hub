@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FF Tournament Hub</title>
+
+  <style>
+    :root{
+      --bg1:#e9f4ff;
+      --bg2:#cfe6ff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:rgba(15, 23, 42, 0.12);
+      --accent:#1d4ed8;
+      --accent2:#0ea5e9;
+      --danger:#dc2626;
+      --ok:#16a34a;
+      --shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 20% 10%, #ffffff 0%, var(--bg1) 35%, var(--bg2) 100%);
+      min-height:100vh;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .container{ width:min(1100px, 92%); margin:0 auto; }
+
+    /* Top Bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(233, 244, 255, 0.72);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:0.4px;
+    }
+    .logo{
+      width:38px; height:38px;
+      border-radius:12px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      box-shadow: 0 10px 18px rgba(29,78,216,0.25);
+      display:grid;
+      place-items:center;
+      color:white;
+      font-weight:900;
+    }
+    .navlinks{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .navlinks a{
+      padding:8px 10px;
+      border-radius:12px;
+      color:var(--muted);
+      font-weight:600;
+      transition:0.2s;
+    }
+    .navlinks a:hover{
+      background: rgba(255,255,255,0.8);
+      color:var(--text);
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:700;
+      transition:0.2s;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn-primary{
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color:white;
+      box-shadow: 0 14px 24px rgba(29,78,216,0.25);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); }
+    .btn-ghost{
+      background: rgba(255,255,255,0.85);
+      color: var(--text);
+      border:1px solid var(--line);
+    }
+    .btn-ghost:hover{ transform: translateY(-1px); }
+
+    /* Hero */
+    header.hero{
+      padding:34px 0 18px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+    }
+
+    .hero-card{
+      background: rgba(255,255,255,0.84);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:-60px -60px auto auto;
+      width:180px; height:180px;
+      background: radial-gradient(circle at 30% 30%, rgba(14,165,233,0.25), transparent 60%);
+      transform: rotate(25deg);
+    }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(29,78,216,0.08);
+      border:1px solid rgba(29,78,216,0.18);
+      color:var(--accent);
+      font-weight:800;
+      width:max-content;
+      margin-bottom:12px;
+    }
+    .title{
+      font-size: clamp(28px, 4vw, 42px);
+      line-height:1.08;
+      font-weight:900;
+      letter-spacing:0.2px;
+      margin-bottom:10px;
+    }
+    .subtitle{
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height:1.5;
+      margin-bottom:16px;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin: 12px 0 16px;
+    }
+    .pill{
+      padding:9px 12px;
+      background: rgba(255,255,255,0.9);
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-weight:700;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .dot{
+      width:10px; height:10px;
+      border-radius:50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(22,163,74,0.15);
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    /* Info card right */
+    .side-card{
+      background: rgba(255,255,255,0.8);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .stat{
+      background: rgba(233, 244, 255, 0.8);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: 16px;
+      padding:14px;
+    }
+    .stat h3{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:800;
+      letter-spacing:0.4px;
+      text-transform:uppercase;
+    }
+    .stat p{
+      font-size:22px;
+      font-weight:900;
+    }
+
+    /* Sections */
+    section{
+      padding:16px 0;
+    }
+    .section-title{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .card{
+      background: rgba(255,255,255,0.9);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 14px 30px rgba(2,6,23,0.10);
+    }
+    .card h4{
+      font-weight:900;
+      margin-bottom:8px;
+      font-size:16px;
+    }
+    .card p{
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    /* Rules */
+    .rules{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .rules{ grid-template-columns: 1fr; }
+    }
+    .rulebox{
+      background: rgba(255,255,255,0.92);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 14px 30px rgba(2,6,23,0.10);
+    }
+    .rulehead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .badge{
+      padding:7px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:0.3px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.9);
+    }
+    .badge-danger{
+      color: var(--danger);
+      border-color: rgba(220,38,38,0.25);
+      background: rgba(220,38,38,0.06);
+    }
+    .badge-ok{
+      color: var(--ok);
+      border-color: rgba(22,163,74,0.25);
+      background: rgba(22,163,74,0.06);
+    }
+    ul{
+      padding-left: 18px;
+      color: var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+    .banline{
+      margin-top:10px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(220,38,38,0.25);
+      background: rgba(220,38,38,0.06);
+      color:#7f1d1d;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    /* Contact */
+    .contacts{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .contacts{ grid-template-columns: 1fr; }
+    }
+    .contact-card{
+      background: rgba(255,255,255,0.92);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 14px 30px rgba(2,6,23,0.10);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .contact-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .role{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:0.35px;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+    .name{
+      font-size:18px;
+      font-weight:900;
+      margin-top:2px;
+    }
+    .num{
+      font-weight:800;
+      color:var(--muted);
+      margin-top:2px;
+      font-size:14px;
+    }
+
+    .contact-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    footer{
+      padding:22px 0 30px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+
+    /* Smooth reveal animation */
+    .reveal{
+      opacity:0;
+      transform: translateY(12px);
+      transition: 0.6s ease;
+    }
+    .reveal.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* small helper */
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <div class="nav">
+        <div class="brand">
+          <div class="logo">FF</div>
+          <div>
+            <div style="font-size:15px; font-weight:900;">FF Tournament Hub</div>
+            <div class="tiny">Daily Custom Matches</div>
+          </div>
+        </div>
+
+        <div class="navlinks">
+          <a href="#about">About</a>
+          <a href="#rules">Rules</a>
+          <a href="#contact">Contact</a>
+          <a href="#join" class="btn btn-primary" style="padding:9px 12px;">Join Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-grid">
+
+        <div class="hero-card reveal">
+          <div class="kicker">🏆 Daily Matches • Real & Fair</div>
+
+          <div class="title">
+            FF Tournament Hub
+          </div>
+
+          <div class="subtitle">
+            Yahan <b>Daily</b> Free Fire Custom Matches hote hain.
+            <br/>
+            <b>Solo</b> & <b>Squad</b> — entry sirf ₹49.
+            Fair-play rules strict hain.
+          </div>
+
+          <div class="pill-row">
+            <div class="pill"><span class="dot"></span> Daily Match Updates</div>
+            <div class="pill">💰 Entry Fee: ₹49</div>
+            <div class="pill">🚫 No PC Players</div>
+            <div class="pill">🚫 No Panel / Unfair Play</div>
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#join">📌 Match Join</a>
+            <a class="btn btn-ghost" href="#rules">📜 Rules</a>
+            <a class="btn btn-ghost" href="#contact">📞 Contact</a>
+          </div>
+        </div>
+
+        <div class="side-card reveal">
+          <div class="stat">
+            <h3>Mode</h3>
+            <p>Solo • Squad</p>
+          </div>
+          <div class="stat">
+            <h3>Entry Fee</h3>
+            <p>₹49 Only</p>
+          </div>
+          <div class="stat">
+            <h3>Status</h3>
+            <p>Daily Running ✅</p>
+          </div>
+
+          <div class="tiny">
+            *Room ID & Time updates group me milenge.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <section id="about">
+    <div class="container">
+      <div class="section-title reveal">About FF Tournament Hub</div>
+
+      <div class="grid">
+        <div class="card reveal">
+          <h4>Daily Matches</h4>
+          <p>
+            Har din custom matches hote hain. Time aur Room ID update yahin aur group me milega.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h4>Entry Fee ₹49</h4>
+          <p>
+            Low entry fee, aur proper match management. Payment details WhatsApp par.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h4>Strict Fair Play</h4>
+          <p>
+            PC players aur panel users allowed nahi. Jo rule break karega uska prize cancel + ban.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="container">
+      <div class="section-title reveal">Rules (Important)</div>
+
+      <div class="rules">
+        <div class="rulebox reveal">
+          <div class="rulehead">
+            <h4 style="font-size:16px; font-weight:900;">Allowed ✅</h4>
+            <span class="badge badge-ok">Fair Play</span>
+          </div>
+          <ul>
+            <li>Solo & Squad Matches</li>
+            <li>Entry Fee: ₹49</li>
+            <li>Mobile Players Only</li>
+            <li>Proper Room Timing & Updates</li>
+          </ul>
+        </div>
+
+        <div class="rulebox reveal">
+          <div class="rulehead">
+            <h4 style="font-size:16px; font-weight:900;">Not Allowed 🚫</h4>
+            <span class="badge badge-danger">Strict</span>
+          </div>
+          <ul>
+            <li><b>NO PC Players</b></li>
+            <li><b>NO PANEL / UNFAIR PLAY</b></li>
+            <li>Any kind of hacking / scripts</li>
+          </ul>
+
+          <div class="banline">
+            ⚠️ Rule Break = Prize Cancel + Tournament Ban
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="join">
+    <div class="container">
+      <div class="section-title reveal">Join Today</div>
+
+      <div class="card reveal" style="padding:18px;">
+        <h4 style="font-size:16px; font-weight:900; margin-bottom:8px;">Kaise Join Kare?</h4>
+        <p style="margin-bottom:12px;">
+          WhatsApp par contact karo, entry fee ₹49 confirm karo, aur match ka Room ID / Time le lo.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contact">📲 WhatsApp Contact</a>
+          <button class="btn btn-ghost" id="copyRulesBtn">📋 Copy Rules Text</button>
+        </div>
+
+        <p class="tiny" style="margin-top:10px;">
+          *Rules copy karke group me pin kar sakte ho.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <div class="section-title reveal">Contact (WhatsApp)</div>
+
+      <div class="contacts">
+        <div class="contact-card reveal">
+          <div class="contact-top">
+            <div>
+              <div class="role">Owner</div>
+              <div class="name">Suraj</div>
+              <div class="num">7355098747</div>
+            </div>
+            <span class="badge">Main</span>
+          </div>
+
+          <div class="contact-actions">
+            <a class="btn btn-primary" target="_blank"
+               href="https://wa.me/917355098747?text=Hyy%20Bhai%20FF%20Tournament%20Hub%20me%20match%20join%20karna%20hai%20(Entry%20%E2%82%B949).">
+              WhatsApp
+            </a>
+            <a class="btn btn-ghost" href="tel:+917355098747">Call</a>
+          </div>
+        </div>
+
+        <div class="contact-card reveal">
+          <div class="contact-top">
+            <div>
+              <div class="role">Live Manager</div>
+              <div class="name">Dipanshu Rao</div>
+              <div class="num">8252302445</div>
+            </div>
+            <span class="badge">Support</span>
+          </div>
+
+          <div class="contact-actions">
+            <a class="btn btn-primary" target="_blank"
+               href="https://wa.me/918252302445?text=Hyy%20Bhai%20FF%20Tournament%20Hub%20Daily%20match%20details%20chahiye.">
+              WhatsApp
+            </a>
+            <a class="btn btn-ghost" href="tel:+918252302445">Call</a>
+          </div>
+        </div>
+
+        <div class="contact-card reveal">
+          <div class="contact-top">
+            <div>
+              <div class="role">Player Coordinator</div>
+              <div class="name">Uday Maurya</div>
+              <div class="num">9506591022</div>
+            </div>
+            <span class="badge">Entry</span>
+          </div>
+
+          <div class="contact-actions">
+            <a class="btn btn-primary" target="_blank"
+               href="https://wa.me/919506591022?text=Hyy%20Bhai%20Entry%20fee%20%E2%82%B949%20ke%20saath%20match%20join%20karna%20hai.">
+              WhatsApp
+            </a>
+            <a class="btn btn-ghost" href="tel:+919506591022">Call</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> FF Tournament Hub • Daily Matches • Fair Play ✅
+  </footer>
+
+  <script>
+    // year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // reveal animation on scroll
+    const items = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add("show");
+      });
+    }, { threshold: 0.12 });
+
+    items.forEach(i => io.observe(i));
+
+    // copy rules text
+    const copyBtn = document.getElementById("copyRulesBtn");
+    copyBtn.addEventListener("click", async ()=>{
+      const text =
+`FF Tournament Hub 🏆
+Daily Matches • Solo • Squad
+Entry Fee: ₹49
+
+RULES:
+🚫 NO PC PLAYERS
+🚫 NO PANEL / UNFAIR PLAY
+⚠️ Rule Break = Prize Cancel + Tournament Ban
+
+Contact:
+Suraj – 7355098747
+Dipanshu Rao – 8252302445
+Uday Maurya – 9506591022`;
+
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "✅ Copied!";
+        setTimeout(()=> copyBtn.textContent = "📋 Copy Rules Text", 1400);
+      }catch(err){
+        alert("Copy nahi ho paya, manual copy kar lo:\n\n" + text);
+      }
+    });
+  </script>
+
+</body>
+</html>
